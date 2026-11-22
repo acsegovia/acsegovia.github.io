@@ -74,9 +74,9 @@ table.mx{border-collapse:separate;border-spacing:0;margin:0 auto;font-size:.72re
 .mx thead th button{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;border:0;background:none;cursor:pointer;padding:4px 0;font-size:.72rem;font-weight:600;color:var(--ink);border-radius:6px;width:100%}
 .mx tbody th{text-align:right;position:sticky;left:0;background:var(--card);z-index:1}
 .mx tbody th button{border:0;background:none;cursor:pointer;white-space:nowrap;font-size:.72rem;font-weight:600;padding:0 6px 0 2px;height:var(--c);width:100%;text-align:right;border-radius:6px}
-.mx td button{width:var(--c);height:var(--c);display:grid;place-items:center;border:0;background:transparent;cursor:pointer;padding:0;border-radius:4px;transition:opacity .15s,background .15s}
+.mx td .cell{width:var(--c);height:var(--c);display:grid;place-items:center;border:0;background:transparent;cursor:pointer;padding:0;border-radius:4px;transition:opacity .15s,background .15s}
 .mx td .dot{width:calc(var(--c) - 9px);height:calc(var(--c) - 9px)}
-.mx tr:nth-child(even) td button{background:#f6f9fd}
+.mx tr:nth-child(even) td .cell{background:#f6f9fd}
 .mx{--c:24px}
 .mx.has .cell{opacity:.18}
 .mx.has .cell.on{opacity:1;background:#e3f0fc}
@@ -198,7 +198,7 @@ header.hero{background:var(--hdr)!important;color:var(--hdr-ink)!important;trans
 .mx .hd.on{color:var(--on-blue)!important}
 .mx.has .cell.on{background:var(--tint)!important}
 .mx.has .cell.x2{background:var(--tint2)!important}
-.mx .hd,.mx td button,.tel,.tbl,.bar,.ref .cite,.sech,footer{transition:background-color .5s,color .5s,border-color .5s,box-shadow .5s,opacity .15s}
+.mx .hd,.mx td .cell,.tel,.tbl,.bar,.ref .cite,.sech,footer{transition:background-color .5s,color .5s,border-color .5s,box-shadow .5s,opacity .15s}
 .tel{color:var(--on-blue)!important}
 .tbl{border-top:4px solid var(--blue)}
 .who button[aria-pressed=true]{background:var(--blue);color:var(--on-blue);border-color:var(--blue)}
@@ -259,6 +259,47 @@ body[data-r=M] .tbl{border-top-color:#7a0000;box-shadow:0 0 0 2px #d61f1f,0 0 22
 .fx-l li:first-child a{background:var(--blue);color:var(--on-blue)}
 @media(max-width:480px){.fx{padding:10px 10px}.fx-l a{min-height:32px;padding:4px 10px;font-size:.78rem}}
 
+/* v10: seleccionar solo desde los nombres */
+.mx td .cell{cursor:default}
+.mx .hd{position:relative;border:1.5px solid #c9d3df!important;background:#fff!important;color:var(--ink);cursor:pointer;transition:background-color .3s,border-color .3s,color .3s,opacity .15s}
+.mx .hd::before{content:"+";display:inline;font-weight:800;color:var(--blue-d);margin:0 3px 0 0;font-size:1.05em;line-height:1}
+.mx .hd.on::before{content:"✓";color:inherit}
+.mx .hd.on{background:var(--blue)!important;border-color:var(--blue)!important;color:var(--on-blue)!important}
+.mx .hd:hover{border-color:var(--blue)!important}
+.mx thead th button.hd{border-radius:99px;padding:6px 0;width:calc(var(--c) - 1px);margin:0 auto 2px;display:block}
+.mx tbody th button.hd{border-radius:11px;padding:1px 7px 1px 4px;margin:1px 3px 1px 0;width:auto;height:auto;min-height:calc(var(--c) - 2px);word-break:keep-all;overflow-wrap:normal}
+.mx .corner{vertical-align:bottom;padding:0 4px 6px 0}
+.mx .ch{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:.66rem;line-height:1.15;color:var(--blue-d);text-align:right}
+.mx .ch b{font-weight:800;max-width:92px}
+.mx .ch .ar{font-weight:700;white-space:nowrap}
+.mx.has .ch{opacity:.55}
+.mx.idle .hd{animation:llamar 1.4s ease-in-out 3}
+@keyframes llamar{50%{border-color:var(--blue)!important;box-shadow:0 0 0 3px var(--tint)}}
+@media(prefers-reduced-motion:reduce){.mx.idle .hd{animation:none}}
+@media(max-width:480px){
+ .mx{--c:17px}.mx td .dot{width:11px;height:11px}
+ .mx tbody th button.hd{padding:1px 4px 1px 3px;line-height:1.05;max-width:76px;font-size:.58rem;margin-right:2px}
+ .mx thead th button.hd{font-size:.58rem}
+ .mx .hd::before{margin-right:2px}
+ .mx thead th button.hd{padding:5px 0}
+ .mx .ch{font-size:.56rem}.mx .ch b{max-width:62px}
+}
+
+/* v11: redes plegables */
+.fx-t{display:inline-flex;align-items:center;gap:6px;margin-top:9px;min-height:34px;padding:5px 14px;border-radius:99px;border:1.5px solid var(--blue);background:var(--blue);color:var(--on-blue);font-weight:700;font-size:.84rem;cursor:pointer;transition:background-color .5s,border-color .5s,color .5s}
+.fx-t .chev{display:inline-block;transition:transform .25s}
+.fx-t[aria-expanded=true] .chev{transform:rotate(180deg)}
+.fx-w{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .3s ease,visibility 0s linear .3s}
+.fx-w.open{grid-template-rows:1fr;visibility:visible;transition:grid-template-rows .3s ease,visibility 0s}
+.fx-in{overflow:hidden;min-height:0}
+.fx-l li:first-child a{background:#fff;color:var(--ink)}
+@media(prefers-reduced-motion:reduce){.fx-w,.fx-w.open,.fx-t .chev{transition:none}}
+
+.cc{margin:8px 0 2px;font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--blue-d)}
+.apa{padding-left:1.6em;text-indent:-1.6em}
+.apa cite{font-style:normal}
+.ref .cite.apa{padding-left:calc(12px + 1.6em)}
+
 .mob{display:none}@media(max-width:480px){.mob{display:inline}}
 </style>
 </head>
@@ -274,7 +315,10 @@ body[data-r=M] .tbl{border-top-color:#7a0000;box-shadow:0 0 0 2px #d61f1f,0 0 22
 <main class="wrap">
  <section class="card fx" aria-labelledby="fx-h">
   <p class="fx-h" id="fx-h">Información basada en <strong>Farmadrux</strong> (Impulse CDMX)</p>
-  <p class="fx-c">Farmadrux e Impulse Ciudad de México. <cite>«El acceso a la información ayuda a reducir riesgos»</cite> [póster], con Disidencias. Consultado en noviembre de 2026.</p>
+  <p class="cc">Cómo citar</p>
+  <p class="fx-c apa">Farmadrux, &amp; Impulse Ciudad de México. (s.&nbsp;f.). <cite><i>El acceso a la información ayuda a reducir riesgos. De ti depende ser responsable</i></cite> [Póster, en colaboración con Disidencias]. Ciudad de México, México.</p>
+  <button type="button" class="fx-t" id="fx-t" aria-expanded="false" aria-controls="fx-redes">Redes <span class="chev" aria-hidden="true">▾</span></button>
+  <div class="fx-w" id="fx-redes"><div class="fx-in">
   <ul class="fx-l" aria-label="Contacto de Farmadrux">
     <li><a href="https://farmadrux.com/" target="_blank" rel="noopener">Sitio web</a></li>
     <li><a href="https://www.instagram.com/farmadrux/" target="_blank" rel="noopener">Instagram</a></li>
@@ -285,6 +329,7 @@ body[data-r=M] .tbl{border-top-color:#7a0000;box-shadow:0 0 0 2px #d61f1f,0 0 22
     <li><a href="https://farmadrux.com/contacto" target="_blank" rel="noopener">Contacto</a></li>
     <li><a href="https://farmadrux.com/recursos" target="_blank" rel="noopener">Recursos</a></li>
   </ul>
+  </div></div>
  </section>
  <section class="card tbl" aria-labelledby="mx-h">
   <div class="bar" id="bar">
@@ -294,7 +339,7 @@ body[data-r=M] .tbl{border-top-color:#7a0000;box-shadow:0 0 0 2px #d61f1f,0 0 22
   </div>
   <div class="in">
    <h2 id="mx-h" class="sr">Tabla de combinaciones</h2>
-   <p class="hint">Toca el <strong>nombre</strong> de una sustancia (fila o columna) para agregarla o quitarla. Toca un <strong>punto</strong> para ver solo ese cruce.</p>
+   <p class="hint">Toca el <strong>nombre</strong> de una sustancia, arriba o a un lado, para agregarla o quitarla.</p>
    <div class="tablewrap"><table class="mx" id="mx"><caption class="sr">Riesgo al combinar cada par de sustancias</caption></table></div>
   </div>
  </section>
@@ -334,7 +379,8 @@ body[data-r=M] .tbl{border-top-color:#7a0000;box-shadow:0 0 0 2px #d61f1f,0 0 22
  <section class="card ref" aria-labelledby="ref-h">
   <h2 id="ref-h">Fuente y referencia</h2>
   <p>Contenido basado en el póster de Impulse Ciudad de México, creado en colaboración con Farmadrux (con Disidencias). La tabla reproduce su información con fines de difusión y reducción de riesgos.</p>
-  <p class="cite">Farmadrux e Impulse Ciudad de México. <cite>«El acceso a la información ayuda a reducir riesgos. De ti depende ser responsable»</cite> [póster]. Con Disidencias. Ciudad de México. Consultado en noviembre de 2026.</p>
+  <p class="cc">Cómo citar</p>
+  <p class="cite apa">Farmadrux, &amp; Impulse Ciudad de México. (s.&nbsp;f.). <cite><i>El acceso a la información ayuda a reducir riesgos. De ti depende ser responsable</i></cite> [Póster, en colaboración con Disidencias]. Ciudad de México, México.</p>
   <ul>
    <li><strong>Farmadrux</strong> (Andrés Portilla Martínez, farmacología y reducción de riesgos): <a href="https://farmadrux.com/" rel="noopener">farmadrux.com</a> · <a href="https://www.instagram.com/farmadrux/" rel="noopener">Instagram @farmadrux</a> · <a href="https://farmadrux.com/recursos" rel="noopener">Recursos descargables</a></li>
    <li><strong>Impulse Ciudad de México</strong> (Impulse Group, prevención y detección de VIH): <a href="https://www.instagram.com/impulsecdmx/" rel="noopener">Instagram @impulsecdmx</a> · <a href="https://www.impulseawards.com/nosotrxs" rel="noopener">Quiénes son</a> · <a href="https://impulsegroup.org/" rel="noopener">impulsegroup.org</a></li>
@@ -357,17 +403,16 @@ const $=id=>document.getElementById(id);
 const dot=(c,cls="")=>`<span class="dot ${c} ${cls}" aria-hidden="true"></span>`;
 const cruce=n=>n===1?"cruce":"cruces";
 
-let h='<thead><tr><td></td>'+N.map((n,j)=>`<th scope="col"><button type="button" class="hd" data-i="${j}" aria-pressed="false">${n}</button></th>`).join("")+'</tr></thead><tbody>';
+let h='<thead><tr><td class="corner" aria-hidden="true"><span class="ch"><b>Elige tocando un nombre</b><span class="ar">arriba →</span><span class="ar">o aquí ↓</span></span></td>'+N.map((n,j)=>`<th scope="col"><button type="button" class="hd" data-i="${j}" aria-pressed="false">${n}</button></th>`).join("")+'</tr></thead><tbody>';
 N.forEach((n,i)=>{h+=`<tr><th scope="row"><button type="button" class="hd" data-i="${i}" aria-pressed="false">${n.replace(/\//g,"/<wbr>")}</button></th>`;
- M[i].forEach((c,j)=>{h+=`<td><button type="button" class="cell" data-r="${i}" data-c="${j}" aria-label="${n} con ${N[j]}: ${LV[c]}">${dot(c)}</button></td>`});h+='</tr>'});
+ M[i].forEach((c,j)=>{h+=`<td><span class="cell" role="img" data-r="${i}" data-c="${j}" aria-label="${n} con ${N[j]}: ${LV[c]}">${dot(c)}</span></td>`});h+='</tr>'});
 $("mx").insertAdjacentHTML("beforeend",h+'</tbody>');
 
 function toggle(i){const k=sel.indexOf(i);if(k>-1){sel.splice(k,1);if(cur===i)cur=sel.length?sel[sel.length-1]:null}else{sel.push(i);cur=i}render()}
 function add(i){if(!sel.includes(i))sel.push(i);cur=i;render()}
 function setPair(a,b){sel=a===b?[a]:[a,b];cur=b;render()}
 document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
- if(b.classList.contains("cell"))setPair(+b.dataset.r,+b.dataset.c);
- else if(b.dataset.i!==undefined)toggle(+b.dataset.i);
+ if(b.dataset.i!==undefined)toggle(+b.dataset.i);
  else if(b.dataset.go!==undefined)add(+b.dataset.go);
  else if(b.dataset.pa!==undefined){const[a,c]=b.dataset.pa.split(",").map(Number);setPair(a,c)}
  else if(b.dataset.cur!==undefined){cur=+b.dataset.cur;render()}
@@ -375,11 +420,12 @@ document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)r
  else if(b.id==="all"){sel=N.map((_,i)=>i);cur=sel[0];render()}});
 
 $("go").addEventListener("click",e=>{e.preventDefault();const t=document.querySelector(e.currentTarget.getAttribute("href"));if(t)t.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})});
+$("fx-t").addEventListener("click",e=>{const b=e.currentTarget,o=b.getAttribute("aria-expanded")!=="true";b.setAttribute("aria-expanded",o);$("fx-redes").classList.toggle("open",o)});
 function pairs(){const p=[];for(let x=0;x<sel.length;x++)for(let y=x+1;y<sel.length;y++){const a=Math.min(sel[x],sel[y]),b=Math.max(sel[x],sel[y]);p.push([a,b,M[a][b]])}
  return p.sort((u,v)=>ORDER.indexOf(u[2])-ORDER.indexOf(v[2])||u[0]-v[0]||u[1]-v[1])}
 
 function render(){
- const mx=$("mx");mx.classList.toggle("has",sel.length>0);
+ const mx=$("mx");mx.classList.toggle("has",sel.length>0);mx.classList.toggle("idle",!sel.length);
  document.querySelectorAll(".mx .hd").forEach(b=>{const on=sel.includes(+b.dataset.i);b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});
  const two=sel.length===2;
  document.querySelectorAll(".mx .cell").forEach(b=>{const r=+b.dataset.r,c=+b.dataset.c,ir=sel.includes(r),ic=sel.includes(c),both=ir&&ic&&r!==c;
