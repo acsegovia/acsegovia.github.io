@@ -123,9 +123,10 @@ footer p{margin:0 0 6px}
 @keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
 @media(prefers-reduced-motion:reduce){.torreta .halo,.torreta .dome::after{animation:none}.torreta.on .halo{animation:pulse 1.6s ease-in-out infinite}}
 .res{display:grid;gap:16px;margin-top:16px}
-.res>#match:empty{display:none}
-.res #match .sum,.res #match .match{margin-bottom:0}
-.res #match .pairs{margin:16px 0 0!important}
+#match{margin-top:16px;scroll-margin-top:12px}
+#match:empty{display:none}
+#match .sum,#match .match{margin-bottom:0}
+.res>#pairs:empty{display:none}
 @media(min-width:980px){
  .tbl{display:grid;grid-template-columns:minmax(0,1fr) 230px}
  .tbl .in{grid-column:1;grid-row:1}
@@ -298,6 +299,8 @@ body[data-r=M] .tbl{border-top-color:#7a0000;box-shadow:0 0 0 2px #d61f1f,0 0 22
   </div>
  </section>
 
+ <div id="match" aria-live="polite"></div>
+
  <section class="card notes" aria-labelledby="leg-h">
   <h2 id="leg-h">Cómo leer la tabla</h2>
   <ul class="legend lg2" aria-label="Leyenda">
@@ -324,7 +327,7 @@ body[data-r=M] .tbl{border-top-color:#7a0000;box-shadow:0 0 0 2px #d61f1f,0 0 22
 
  <h2 class="sech" id="resultados">Resultados de tu selección</h2>
  <div class="res">
-  <div id="match" aria-live="polite"></div>
+  <div id="pairs"></div>
   <section class="card list" id="list" aria-labelledby="res-h"></section>
  </div>
 
@@ -371,6 +374,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)r
  else if(b.id==="clear"){sel=[];cur=null;render()}
  else if(b.id==="all"){sel=N.map((_,i)=>i);cur=sel[0];render()}});
 
+$("go").addEventListener("click",e=>{e.preventDefault();const t=document.querySelector(e.currentTarget.getAttribute("href"));if(t)t.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})});
 function pairs(){const p=[];for(let x=0;x<sel.length;x++)for(let y=x+1;y<sel.length;y++){const a=Math.min(sel[x],sel[y]),b=Math.max(sel[x],sel[y]);p.push([a,b,M[a][b]])}
  return p.sort((u,v)=>ORDER.indexOf(u[2])-ORDER.indexOf(v[2])||u[0]-v[0]||u[1]-v[1])}
 
@@ -380,7 +384,7 @@ function render(){
  const two=sel.length===2;
  document.querySelectorAll(".mx .cell").forEach(b=>{const r=+b.dataset.r,c=+b.dataset.c,ir=sel.includes(r),ic=sel.includes(c),both=ir&&ic&&r!==c;
   b.classList.toggle("on",ir||ic);b.classList.toggle("x",two&&both);b.classList.toggle("x2",!two&&both)});
- $("clear").hidden=!sel.length;$("go").hidden=sel.length<1;$("all").hidden=sel.length===N.length;
+ $("clear").hidden=!sel.length;$("go").hidden=sel.length<1;$("go").setAttribute("href",sel.length>1?"#match":"#resultados");$("all").hidden=sel.length===N.length;
  const P=pairs(),cnt={M:0,A:0,E:0,P:0};P.forEach(p=>cnt[p[2]]++);
  const w=ORDER.find(c=>cnt[c]);
  // torreta
@@ -388,7 +392,7 @@ function render(){
  document.body.dataset.r=w||"";document.querySelector('meta[name=theme-color]').content={M:"#d61f1f",A:"#c75400",E:"#f5c400",P:"#1f9d48"}[w]||"#1f7fd6";
  $("lvl").textContent=w?LV[w]:"Sin combinación";
  // resultados
- if(two){const c=M[sel[0]][sel[1]];
+ if(two){const c=M[sel[0]][sel[1]];$("pairs").innerHTML="";
   $("match").innerHTML=`<div class="match ${c}" role="status">${dot(c,"big")}<div><p class="t">Si combinas</p><p class="pair">${N[sel[0]]} + ${N[sel[1]]}</p><p class="lvl">${LV[c]}${c==="M"?" — no las mezcles":""}</p></div></div>`;
   $("status").textContent=`${N[sel[0]]} + ${N[sel[1]]}`;
  }else if(sel.length>2){
@@ -397,10 +401,10 @@ function render(){
   ORDER.forEach(c=>{const ps=P.filter(p=>p[2]===c);if(!ps.length)return;
    g+=`<details class="g-${c}" ${(!many||c==="M"||(c==="A"&&!cnt.M))?"open":""}><summary>${dot(c)}${LV[c]} (${ps.length})</summary><ul>${ps.map(p=>`<li><button type="button" data-pa="${p[0]},${p[1]}" aria-label="Ver ${N[p[0]]} con ${N[p[1]]}: ${LV[c]}">${N[p[0]]} + ${N[p[1]]}</button></li>`).join("")}</ul></details>`});
   $("match").innerHTML=`<div class="sum ${w}" role="status"><div class="head">${dot(w,"big")}<div><p class="ttl">${ttl}</p><p class="sub">${sel.length} sustancias · ${P.length} combinaciones entre ellas</p></div></div>
-   <ul class="counts">${ORDER.filter(c=>cnt[c]).map(c=>`<li>${dot(c)}${cnt[c]} ${PL[c]}</li>`).join("")}</ul></div>
-   <section class="card pairs"><h2>Todas las combinaciones</h2><p class="hint" style="margin:0 0 4px">De mayor a menor riesgo. Toca una para verla sola.</p>${g}</section>`;
+   <ul class="counts">${ORDER.filter(c=>cnt[c]).map(c=>`<li>${dot(c)}${cnt[c]} ${PL[c]}</li>`).join("")}</ul></div>`;
+  $("pairs").innerHTML=`<section class="card pairs"><h2>Todas las combinaciones</h2><p class="hint" style="margin:0 0 4px">De mayor a menor riesgo. Toca una para verla sola.</p>${g}</section>`;
   $("status").textContent=`${sel.length} sustancias · ${cnt[w]} ${cruce(cnt[w])} de ${PL[w]}`;
- }else{$("match").innerHTML="";$("status").textContent=sel.length?`${N[sel[0]]}: toca otra sustancia para combinar.`:"Toca dos o más sustancias."}
+ }else{$("match").innerHTML="";$("pairs").innerHTML="";$("status").textContent=sel.length?`${N[sel[0]]}: toca otra sustancia para combinar.`:"Toca dos o más sustancias."}
  // lista de la sustancia actual
  const L=$("list");
  if(!sel.length){L.innerHTML='<h2 id="res-h">Resultado</h2><p class="empty">Toca el nombre de una sustancia en la tabla para ver aquí, de mayor a menor riesgo, con qué no debes combinarla.</p>'}
